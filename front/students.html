@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    Welcome to my application
+    <script>
+      const MYSERVER = "http://127.0.0.1:3005/students/";
+
+      const get_all = async () => {
+        let res = await fetch(MYSERVER).then((response) => response.json());
+        show.innerHTML = res
+          .map(
+            (student) =>
+              `<div><button onclick="get_one('${student._id}')"> ${student.name} -  ${student.age} </button>
+                
+                <button onclick="del_note('${student._id}')">Delete</button>
+                </div>`
+          )
+          .join("");
+      };
+      //   create a new student
+      const add_note = () => {
+        fetch(MYSERVER, {
+          method: "POST",
+          body: JSON.stringify({
+            name: sname.value || "Unnamed Note",
+            age: age.value,
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        })
+          .then((response) => response.json())
+          .then((json) => console.log(json));
+      };
+
+      const get_one = (id) => {
+        console.log(`${MYSERVER}${id}`);
+        fetch(`${MYSERVER}${id}`)
+          .then((response) => response.json())
+          .then((json) => console.log(json));
+      };
+
+      const del_note = (id) => {
+        fetch(`${MYSERVER}${id}`, { method: "DELETE" });
+      };
+    </script>
+    <button onclick="add_note()">create</button>
+    <button onclick="get_all()">Get all</button>
+    <button>Get one</button>
+    <button>Delete</button><button>Update</button><br />
+    name:<input id="sname" /><br />
+    age: <input id="age" /><br />
+    <div id="show"></div>
+  </body>
+</html>
